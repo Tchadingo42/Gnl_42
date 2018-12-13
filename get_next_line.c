@@ -75,7 +75,7 @@ int			get_next_line(const int fd, char **line)
 	{
 		if (!buff[fd][0])
 			ret = read(fd, &buff[fd], BUFF_SIZE);
-		if (ret == 1)
+		if (ret < 0)
 			return (1);
 	size = ft_words_size(buff[fd]);
 	tmp = *line;

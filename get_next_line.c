@@ -6,7 +6,7 @@
 /*   By: chbelan <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/12/21 14:14:07 by chbelan           #+#    #+#             */
-/*   Updated: 2018/12/22 17:11:17 by chbelan          ###   ########.fr       */
+/*   Updated: 2019/01/09 18:37:14 by chbelan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,34 +41,35 @@ static int			ft_words_size(char *str)
 	return (i);
 }
 
-static void			ft_safe_cpy(char *buf, char *src)
+static void			ft_strcpy_safe(char *dest, char *src)
 {
 	size_t			i;
 
 	i = 0;
 	while (src[i])
 	{
-		buf[i] = src[i];
+		dest[i] = src[i];
 		i++;
 	}
-	while (i <= BUFF_SIZE)
+	while (dest[i])
 	{
-		buf[i] = '\0';
+		dest[i] = 0;
 		i++;
 	}
 }
 
-static int			ft_fill(char *buf, char *line, int size)
+static int			ft_fill(char *buf, int size)
 {
-	ft_safe_cpy(buf, &(buf[size + 1]));
-	if (!buf[0] && !line[0])
-		buf[0] = '\0';
+	if (buf == NULL)
+		buf[0] = 0;
+	else
+		ft_strcpy_safe(buf, &(buf[size + 1]));
 	return (1);
 }
 
 int					get_next_line(const int fd, char **line)
 {
-	static char		buf[256][BUFF_SIZE + 1];
+	static char		buf[4096][BUFF_SIZE + 1];
 	char			*tmp;
 	int				ret;
 	int				words_size;
@@ -87,8 +88,8 @@ int					get_next_line(const int fd, char **line)
 		tmp = *line;
 		*line = ft_strnjoin(tmp, buf[fd], words_size);
 		free(tmp);
-		if (buf[fd][words_size] || (!buf[fd][0] && *line[0]))
-			return (ft_fill(buf[fd], *line, words_size));
+		if ((!buf[fd][0] && *line[0]) || (buf[fd][words_size]))
+			return (ft_fill(buf[fd], words_size));
 		ft_strclr((char *)&buf[fd]);
 	}
 	return (0);
